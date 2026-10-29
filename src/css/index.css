@@ -4,7 +4,7 @@
   font-weight: 400;
 
   color-scheme: light dark;
-  color: rgba(255, 206, 206, 1) !important;
+  color: rgb(245, 246, 247) !important;
   background-color: #141010;
 
   font-synthesis: none;
@@ -12,9 +12,16 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  --light-accent: rgb(105, 60, 56);
-  --med-accent: rgb(95, 37, 33);
-  --dark-accent: rgb(68, 15, 11);
+  --light-accent: rgb(86, 86, 86);
+  --med-accent: rgb(67, 66, 67);
+  --dark-accent: rgb(49, 49, 49);
+
+  --body-background-color: #161616;
+  --button-background-color: #2a2a2b;
+  --selected-button-color: #545354;
+  --shadow-color: rgba(194, 194, 197, 0.15);
+  
+  --form-background-color: #1e1e1ebd;
 }
 
 * {
@@ -30,24 +37,24 @@ body {
   width: 100vw;
   height: 100vh;
   /* Base color */
-  background-color: #141010; 
+  background-color: var(--body-background-color); 
   /* Layering the animation */
-  background: radial-gradient(circle at center, #241414 0%, #141010 100%);
+  background: radial-gradient(circle at center, #181424 0%, #111014 100%);
   animation: bgPulse 8s infinite alternate ease-in-out;
   overflow-x: hidden;
 }
 
 @keyframes bgPulse {
   0% {
-    background-color: #141010;
+    background-color: #101014;
     filter: brightness(1);
   }
   50% {
-    background-color: #1a1111; /* Slightly lighter red-tint */
+    background-color: #11111a; /* Slightly lighter red-tint */
     filter: brightness(1.2);
   }
   100% {
-    background-color: #141010;
+    background-color: #101114;
     filter: brightness(1);
   }
 }

@@ -8,11 +8,11 @@ function MatchClock({ timer, disabled, isActive, setIsActive, resetMatch, toggle
     let minutes;
     let seconds;
 
-    if (timer < 20) {
+    if (timer < 30) {
         minutes = 0;
-        seconds = 20 - timer;
+        seconds = 30 - timer;
     } else {
-        const cdtime = 160 - timer;
+        const cdtime = 150 - timer;
         seconds = cdtime % 60;
         minutes = (cdtime - seconds) / 60;
     }

@@ -22,30 +22,27 @@ function MatchScoutingForm({matches, setMatches, TBAdata, triggerHaptic, tablet}
 
     setFormData({
       scouter: formData.scouter,
-      teamNum: robot != "" && robot != "H" && robot != "Hu" ? TBAdata[formData.matchNum].alliances[alliance.toLowerCase()].team_keys[robot - 1].substring(3) : "",
+      teamNum: "",
       matchNum: Number(formData.matchNum) + 1,
-      startPos: "",
-      autoClimb: {
-        startTime: "",
-        location: "",
-        success: "No",
-        successTime: ""
+      teleop: {
+        hiveNectar: 0,
+        flowerNectar: 0,
+        hivePollen: 0,
+        flowerPollen: 0,
+        cycles: {
+          starts: [],
+          stops: []
+        }
       },
-      autoFuel: 0,
-      teleClimb: {
-        startTime: "",
-        location: "",
-        level: "",
-        success: "No",
-        successTime: ""
-      },
-      teleCycles: {
-        starts: [],
-        stops: []
-      },
-      autoCycles: {
-        starts: [],
-        stops: []
+      auto: {
+        hiveNectar: 0,
+        flowerNectar: 0,
+        hivePollen: 0,
+        flowerPollen: 0,
+        cycles: {
+          starts: [],
+          stops: []
+        }
       },
       comments:"",
       defensePlayed:"No",
@@ -94,48 +91,39 @@ function MatchScoutingForm({matches, setMatches, TBAdata, triggerHaptic, tablet}
   const [formData, setFormData] = useLocalStorage('matchformData',
     {
       scouter: "",
-      teamNum: robot != "" && robot != "H" && robot != "Hu" ? TBAdata[0].alliances[alliance.toLowerCase()].team_keys[robot - 1].substring(3) : "",
-      matchNum: 1,
-      startPos: "",
-      autoCycles: {
-        starts: [],
-        stops: []
+      teamNum: "",
+      matchNum: "",
+      teleop: {
+        hiveNectar: 0,
+        flowerNectar: 0,
+        hivePollen: 0,
+        flowerPollen: 0,
+        cycles: {
+          starts: [],
+          stops: []
+        }
       },
-      autoClimb: {
-        startTime: "",
-        location: "",
-        success: "",
-        successTime: ""
-      },
-      autoFuel: 0,
-      teleCycles: {
-        starts: [],
-        stops: []
-      },
-      teleClimb: {
-        startTime: "",
-        location: "",
-        level: "",
-        success: "",
-        successTime: ""
+      auto: {
+        hiveNectar: 0,
+        flowerNectar: 0,
+        hivePollen: 0,
+        flowerPollen: 0,
+        cycles: {
+          starts: [],
+          stops: []
+        }
       },
       comments:"",
       defensePlayed:"No",
-      defenseRating:"",
+      defenseRating:""
     }
   );
 
   const [disabled, setDisabled] = useLocalStorage('disabled', {
-    autoFuel: false,
-    autoCycle: true,
-    autoClimb: false,
-    nextBtn: false,
-    autoClimbDetails: true,
-    teleFuel: false,
-    teleCycle: true,
-    teleClimb: false,
-    teleClimbDetails: true,
-    defenseRating: true
+    hiveNectar: false,
+    hivePollen: false,
+    flowerNectar: false,
+    flowerPollen: false,
   });
 
   const [currentPage, setCurrentPage] = useLocalStorage('currentPage', 0);
@@ -162,7 +150,7 @@ useEffect(() => {
     interval = setInterval(() => {
       setMatchTimer((prev) => {
         // 1. Handle the 20-second pause
-        if (prev === 19) { // We check at 19 so the '20' renders and then stays
+        if (prev === 29) { // We check at 29 so the '30' renders and then stays
           setIsPaused(true);
           setTimeout(() => {
             setIsPaused(false);
@@ -170,12 +158,12 @@ useEffect(() => {
             if(disabled.autoCycle === false) {
               setDisabled({...disabled, autoClimb: false, autoFuel: false, autoCycle: true}), setFormData({...formData, autoCycles: {...formData.autoCycles, stops: [...formData.autoCycles.stops, matchTimer]}}) 
             }
-          }, 3000);
-          return 20;
+          }, 8000);
+          return 30;
         }
 
         // 2. Check if we've reached the final limit
-        if (prev >= 160) {
+        if (prev >= 150) {
           setIsActive(false);
           return prev;
         }
@@ -231,18 +219,33 @@ useEffect(() => {
   const resetMatch = () => {
     if (window.confirm("Are you sure you want to reset the match? All current data will be lost.")) {
       setFormData({
-        scouter: formData.scouter, // Keeps the scouter name so they don't have to retype it
-        teamNum: robot != "" && robot != "H" && robot != "Hu" ? TBAdata[formData.matchNum - 1].alliances[alliance.toLowerCase()].team_keys[robot - 1].substring(3) : "",
-        matchNum: formData.matchNum, // Keeps the current match number
-        startPos: "",
-        autoCycles: { starts: [], stops: [] },
-        autoClimb: { startTime: "", location: "", success: "", successTime: "" },
-        autoFuel: 0,
-        teleCycles: { starts: [], stops: [] },
-        teleClimb: { startTime: "", location: "", level: "", success: "", successTime: "" },
-        comments: "",
-        defensePlayed: "No",
-        defenseRating: ""
+        scouter: formData.scouter,
+        teamNum: "",
+        matchNum: Number(formData.matchNum),
+        teleop: {
+          hiveNectar: 0,
+          flowerNectar: 0,
+          hivePollen: 0,
+          flowerPollen: 0,
+          cycles: {
+            starts: [],
+            stops: []
+          }
+        },
+        auto: {
+          hiveNectar: 0,
+          flowerNectar: 0,
+          hivePollen: 0,
+          flowerPollen: 0,
+          cycles: {
+            starts: [],
+            stops: []
+          }
+        },
+        comments:"",
+        defensePlayed:"No",
+        defenseRating:""
+      
       });
       setDisabled({
         autoFuel: false,

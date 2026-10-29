@@ -12,28 +12,6 @@ function PostMatch({submitMatch, disabled, setDisabled, formData, setFormData, i
     <div className="input-page">
       <h1>Post-Match</h1>
 
-      <SelectButtons
-        label="Did they play defense?"
-        values={["Yes", "No"]}
-        selected={formData.defensePlayed}
-        onClick={(val) => {
-          setFormData({...formData, defensePlayed: val});
-          if(val === "Yes") {
-            setDisabled({...disabled, defenseRating: false})
-          } else {
-            setDisabled({...disabled, defenseRating: true})
-          }
-        }}
-      />
-
-      <SelectButtons
-        label="Defense Rating (5 is best)"
-        values={["1", "2", "3", "4", "5"]}
-        disabled={disabled.defenseRating}
-        selected={formData.defenseRating}
-        onClick={(val) => setFormData({...formData, defenseRating: val})}
-      />
-
       <Textarea 
         label="Comments"
         value={formData.comments}

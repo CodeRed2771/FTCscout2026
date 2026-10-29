@@ -3,14 +3,12 @@ import MatchScoutingForm from './workflows/MatchScouting/form.jsx'
 import Leaderboard from './workflows/Leaderboard/main.jsx'
 import { Routes, Route } from 'react-router-dom';
 import PitScoutingForm from './workflows/PitScouting/form.jsx';
-import HumanPlayerForm from './workflows/HumanPlayerScouting/form.jsx';
 import MainMenu from './MainMenu';
 import './css/App.css'
 import useLocalStorage from './utils/useLocalStorage';
 
 function App() {
   const [matches, setMatches] = useLocalStorage('matches', []);
-  const [hpMatches, sethpMatches] = useLocalStorage('hpMatches', []);
   const [pitTeams, setPitTeams] = useLocalStorage('pitTeams', []);
   const [TBAdata, setTBAdata] = useLocalStorage('tbadata', []);
   const [TBAteams, setTBAteams] = useLocalStorage('tbateams', []);
@@ -121,7 +119,6 @@ function App() {
           });
           
           setMatches([]);
-          sethpMatches([]);
           setPitTeams([]);
 
           alert("Data successfully sent!");
@@ -165,11 +162,10 @@ function App() {
   return (
     <div className="app tuff-load">
       <Routes>
-        <Route path="/" element={<MainMenu tablet={tablet} setTablet={setTablet} uploadData={uploadData} hpMatches={hpMatches} matches={matches} pullTBA={pullTBA} pitTeams={pitTeams}/>} />
+        <Route path="/" element={<MainMenu tablet={tablet} setTablet={setTablet} uploadData={uploadData} matches={matches} pullTBA={pullTBA} pitTeams={pitTeams}/>} />
         <Route path="/pit" element={<PitScoutingForm triggerHaptic={triggerHaptic} setPitTeams={setPitTeams}/>} />
         <Route path="/match" element={<MatchScoutingForm tablet={tablet} triggerHaptic={triggerHaptic} matches={matches} setMatches={setMatches} TBAdata={TBAdata}/>} />
         <Route path="/leaderboard" element={<Leaderboard day1Ct={50} fetchData={fetchData} compData={TBAdata} teamData={TBAteams}/>} />
-        <Route path="/humanplayer" element={<HumanPlayerForm tablet={tablet} triggerHaptic={triggerHaptic} sethpMatches={sethpMatches}/>} />
       </Routes>
     </div>
   )

@@ -10,28 +10,7 @@ function PreMatch({formData: formData, setFormData: setFormData}) {
   return (
     <div className="input-page">
         <h1>Pre-Match</h1>
-        <TextInput 
-            label="Scouter" 
-            value={formData.scouter} 
-            onChange={(val) => setFormData({...formData, scouter: val})} 
-        />
-        <NumberInput 
-            label="Match Number" 
-            value={formData.matchNum} 
-            onChange={(val) => setFormData({...formData, matchNum: val})} 
-        />
-        <NumberInput 
-            label="Team Number" 
-            value={formData.teamNum} 
-            onChange={(val) => setFormData({...formData, teamNum: val})} 
-        />
-        <img className="startpos" src={StartPos}></img>
-        <SelectButtons
-            label="Starting Position"
-            values={["A", "B", "C", "D", "E"]}
-            selected={formData.startPos}
-            onClick={(val) => setFormData({...formData, startPos: val})}
-        />
+
     </div>
   )
 }

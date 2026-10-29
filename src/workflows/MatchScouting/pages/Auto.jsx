@@ -5,56 +5,49 @@ import NumberInput from '../../../components/inputs/Num.jsx'
 import SelectButtons from '../../../components/inputs/SelectButton.jsx'
 import Counter from '../../../components/inputs/Counter.jsx'
 import Button from '../../../components/inputs/Button.jsx'
+import OBSSI from '../../../components/inputs/OBSSI.jsx'
 
 function Auto({disabled, setDisabled, formData, setFormData, isActive, matchTimer}) {
   return (
-    <div className="input-page">
+    <div className="input-page auto-page">
         <h1>Auto</h1>
+        <div className="input-row">
+        <div className="input-column">
+          <OBSSI 
+            label={"Nectar Scored in Hive"}
+            count={formData.auto.hiveNectar}
+            increment={() => setFormData({...formData, auto: {...formData.auto, hiveNectar: formData.auto.hiveNectar + 1}})}
+            decrement={() => setFormData({...formData, auto: {...formData.auto, hiveNectar: Math.max(formData.auto.hiveNectar - 1, 0)}})}
+            disabled={disabled.hiveNectar}
+          />
 
-        <Button
-          label={"Start Shooting"}
-          type="shooting"
-          disabled={disabled.autoFuel}
-          onClick={() => {setDisabled({...disabled, autoClimb: true, autoFuel: true, autoCycle: false}), setFormData({...formData, autoCycles: {...formData.autoCycles, starts: [...formData.autoCycles.starts, matchTimer]}})}}
-        />
+          <OBSSI
+            label={"Pollen Scored in Hive"}
+            count={formData.auto.hivePollen}
+            increment={() => setFormData({...formData, auto: {...formData.auto, hivePollen: formData.auto.hivePollen + 1}})}
+            decrement={() => setFormData({...formData, auto: {...formData.auto, hivePollen: Math.max(formData.auto.hivePollen - 1, 0)}})}
+            disabled={disabled.hivePollen}
+          />
+        </div>
 
-        <Button 
-          label="Stop Shooting"
-          type="shooting"
-          onClick={() => {setDisabled({...disabled, autoClimb: false, autoFuel: false, autoCycle: true}), setFormData({...formData, autoCycles: {...formData.autoCycles, stops: [...formData.autoCycles.stops, matchTimer]}}) }}
-          disabled={disabled.autoCycle}
-        />
+        <div className="input-column">
+          <OBSSI 
+            label={"Nectar Scored in Flower"}
+            count={formData.auto.flowerNectar}
+            increment={() => setFormData({...formData, auto: {...formData.auto, flowerNectar: formData.auto.flowerNectar + 1}})}
+            decrement={() => setFormData({...formData, auto: {...formData.auto, flowerNectar: Math.max(formData.auto.flowerNectar - 1, 0)}})}
+            disabled={disabled.flowerNectar}
+          />
 
-        <Button  
-          label="Start Climbing"
-          type="climbing"
-          onClick={() => {setDisabled({...disabled, autoFuel: true, autoCycle: true, autoClimb: true, autoClimbDetails: false}); setFormData({...formData, autoClimb: {...formData.autoClimb, startTime: matchTimer}}) }}
-          disabled={disabled.autoClimb}
-        />
-
-        <SelectButtons
-          label="Attempt Location"
-          values={["Center", "Side"]}
-          disabled={disabled.autoClimbDetails}
-          selected={formData.autoClimb.location}
-          onClick={(val) => setFormData({...formData, autoClimb: {...formData.autoClimb, location: val}})}
-        />
-
-        <SelectButtons
-          label="Success"
-          values={["Yes", "No"]}
-          disabled={disabled.autoClimbDetails}
-          selected={formData.autoClimb.success}
-          onClick={(val) => {setFormData({...formData, autoClimb: {...formData.autoClimb, success: val, successTime: val === "Yes" ? matchTimer : ""}})}}
-        />
-
-        <SelectButtons
-          label="Estimated Fuel Scored"
-          values={[0, 5, 10, 20, 30, 40, 50, 70, 100]}
-          disabled={!isActive}
-          selected={formData.autoFuel}
-          onClick={(val) => setFormData({...formData, autoFuel: val})}
-        />
+          <OBSSI
+            label={"Pollen Scored in Flower"}
+            count={formData.auto.flowerPollen}
+            increment={() => setFormData({...formData, auto: {...formData.auto, flowerPollen: formData.auto.flowerPollen + 1}})}
+            decrement={() => setFormData({...formData, auto: {...formData.auto, flowerPollen: Math.max(formData.auto.flowerPollen - 1, 0)}})}
+            disabled={disabled.flowerPollen}
+          />
+        </div>      
+        </div>  
     </div>
   )
 }
