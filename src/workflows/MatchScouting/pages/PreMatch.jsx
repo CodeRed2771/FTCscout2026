@@ -11,7 +11,10 @@ function PreMatch({formData: formData, setFormData: setFormData}) {
     <div className="input-page">
         <h1>Pre-Match</h1>
 
-    </div>
+        <NumberInput label="Match Number" value={formData.matchNum} onChange={(val) => setFormData({...formData, matchNum: val})} />
+        <TextInput label="Scouter Name" value={formData.scouter} onChange={(val) => setFormData({...formData, scouter: val})} />
+        <NumberInput label="Team Number" value={formData.teamNum} onChange={(val) => setFormData({...formData, teamNum: val})} />
+      </div>
   )
 }
 

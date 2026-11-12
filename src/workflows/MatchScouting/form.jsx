@@ -13,7 +13,7 @@ function MatchScoutingForm({matches, setMatches, TBAdata, triggerHaptic, tablet}
   let robot = tablet.substring(4,6).replaceAll(' ', '') || "";
 
   const submitMatch = async () => {
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyV1AxjUALeD7vlYJxLpw4NWgjkMXFPvv0KIhAIifkvnBgH-D8QvLfRdAdJ6qwrxiTBGQ/exec";
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbz-h60RAdLtnDZIIrlU850N-nlvZBNZ6Kt_OlCDu44o2YK876QNj9NYqtwlu4GWEm5j/exec";
     const payload = {
       matchData: [formData],
       hpData: [],
@@ -24,29 +24,34 @@ function MatchScoutingForm({matches, setMatches, TBAdata, triggerHaptic, tablet}
       scouter: formData.scouter,
       teamNum: "",
       matchNum: Number(formData.matchNum) + 1,
+      auto: {
+        hiveNectar: 0,
+        hivePollen: 0,
+        cycles: {
+          hiveNectar: [],
+          hivePollen: [],
+        },
+        leave: -1,
+        park: -1,
+      },
       teleop: {
         hiveNectar: 0,
         flowerNectar: 0,
         hivePollen: 0,
         flowerPollen: 0,
+        gardenNectar: 0,
+        gardenPollen: 0,
         cycles: {
-          starts: [],
-          stops: []
-        }
+          hiveNectar: [],
+          flowerNectar: [],
+          hivePollen: [],
+          flowerPollen: [],
+          gardenNectar: [],
+          gardenPollen: [],
+        },
+        park: -1,
       },
-      auto: {
-        hiveNectar: 0,
-        flowerNectar: 0,
-        hivePollen: 0,
-        flowerPollen: 0,
-        cycles: {
-          starts: [],
-          stops: []
-        }
-      },
-      comments:"",
-      defensePlayed:"No",
-      defenseRating:""
+      comments:""
     });
     
     setDisabled({
@@ -93,29 +98,34 @@ function MatchScoutingForm({matches, setMatches, TBAdata, triggerHaptic, tablet}
       scouter: "",
       teamNum: "",
       matchNum: "",
+      auto: {
+        hiveNectar: 0,
+        hivePollen: 0,
+        cycles: {
+          hiveNectar: [],
+          hivePollen: [],
+        },
+        leave: -1,
+        park: -1,
+      },
       teleop: {
         hiveNectar: 0,
         flowerNectar: 0,
         hivePollen: 0,
         flowerPollen: 0,
+        gardenNectar: 0,
+        gardenPollen: 0,
         cycles: {
-          starts: [],
-          stops: []
-        }
-      },
-      auto: {
-        hiveNectar: 0,
-        flowerNectar: 0,
-        hivePollen: 0,
-        flowerPollen: 0,
-        cycles: {
-          starts: [],
-          stops: []
-        }
+          hiveNectar: [],
+          flowerNectar: [],
+          hivePollen: [],
+          flowerPollen: [],
+          gardenNectar: [],
+          gardenPollen: [],
+        },
+        park: -1,
       },
       comments:"",
-      defensePlayed:"No",
-      defenseRating:""
     }
   );
 
@@ -155,9 +165,6 @@ useEffect(() => {
           setTimeout(() => {
             setIsPaused(false);
             setCurrentPage(2);
-            if(disabled.autoCycle === false) {
-              setDisabled({...disabled, autoClimb: false, autoFuel: false, autoCycle: true}), setFormData({...formData, autoCycles: {...formData.autoCycles, stops: [...formData.autoCycles.stops, matchTimer]}}) 
-            }
           }, 8000);
           return 30;
         }
@@ -222,30 +229,34 @@ useEffect(() => {
         scouter: formData.scouter,
         teamNum: "",
         matchNum: Number(formData.matchNum),
+        auto: {
+          hiveNectar: 0,
+          hivePollen: 0,
+          cycles: {
+            hiveNectar: [],
+            hivePollen: [],
+          },
+          leave: -1,
+          park: -1,
+        },
         teleop: {
           hiveNectar: 0,
           flowerNectar: 0,
           hivePollen: 0,
           flowerPollen: 0,
+          gardenNectar: 0,
+          gardenPollen: 0,
           cycles: {
-            starts: [],
-            stops: []
-          }
-        },
-        auto: {
-          hiveNectar: 0,
-          flowerNectar: 0,
-          hivePollen: 0,
-          flowerPollen: 0,
-          cycles: {
-            starts: [],
-            stops: []
-          }
+            hiveNectar: [],
+            flowerNectar: [],
+            hivePollen: [],
+            flowerPollen: [],
+            gardenNectar: [],
+            gardenPollen: [],
+          },
+          park: -1,
         },
         comments:"",
-        defensePlayed:"No",
-        defenseRating:""
-      
       });
       setDisabled({
         autoFuel: false,

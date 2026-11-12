@@ -21,35 +21,46 @@ function Form({formData: formData, setFormData: setFormData, submitMatch, disabl
             value={formData.teamNum} 
             onChange={(val) => setFormData({...formData, teamNum: val})} 
         />
+
         <SelectButtons
           label="Drive Train"
-          values={["Swerve", "Mecanum", "Tank", "Other"]}
+          values={["Mecanum", "Tank", "Other"]}
           selected={formData.driveTrain}
           onClick={(val) => {setFormData({...formData, driveTrain: val})}}
         />
-        <SelectButtons
-          label="Do they have a turret"
-          values={["No", "Yes"]}
-          selected={formData.turret}
-          onClick={(val) => {setFormData({...formData, turret: val})}}
-        />
+
         <NumberInput 
-            label="Max Fuel Capacity" 
+            label="Max Game Piece Capacity" 
             value={formData.capacity} 
             onChange={(val) => setFormData({...formData, capacity: val})} 
         />
 
-        <NumberInput 
-            label="Auto Fuel" 
-            value={formData.autoFuel} 
-            onChange={(val) => setFormData({...formData, autoFuel: val})} 
+        <SelectButtons
+          label="Can They Score in the Hive?"
+          values={["No", "Yes"]}
+          selected={formData.hive}
+          onClick={(val) => {setFormData({...formData, hive: val})}}
         />
 
         <SelectButtons
-          label="Climb"
-          values={["None", "L1", "L2", "L3"]}
-          selected={formData.climb}
-          onClick={(val) => {setFormData({...formData, climb: val})}}
+          label="Can They Score in the Flower?"
+          values={["No", "Yes"]}
+          selected={formData.flower}
+          onClick={(val) => {setFormData({...formData, flower: val})}}
+        />
+
+        <SelectButtons
+          label="Can They Leave In Auto?"
+          values={["No", "Yes"]}
+          selected={formData.autoLeave}
+          onClick={(val) => {setFormData({...formData, autoLeave: val})}}
+        />
+
+        <SelectButtons
+          label="Can They Park In Auto?"
+          values={["No", "Yes"]}
+          selected={formData.autoPark}
+          onClick={(val) => {setFormData({...formData, autoPark: val})}}
         />
         
 

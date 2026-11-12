@@ -285,8 +285,12 @@ input::-webkit-inner-spin-button {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid var(--light-accent);
+  border: 1px solid var(--light-accent);
   scale: 1;
+  padding: 25px;
+  width: 300px;
+  font-size: 23px;
+  border-radius: 10px;
 }
 
 .buttonSelected {
@@ -317,6 +321,11 @@ input::-webkit-inner-spin-button {
   border: 2px solid #291919;
   scale: 0.95;
   opacity: 0.6;
+}
+
+.disabled {
+  pointer-events: none;
+  opacity: 0.5;
 }
 
 .clock {
@@ -643,7 +652,7 @@ input[type="range"]::-moz-range-thumb {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 5px;
+  gap: 0px;
 }
 
 .obssi-buttons button {
@@ -688,4 +697,25 @@ input[type="range"]::-moz-range-thumb {
   align-items: center;
   justify-content: center;
   width: 100%;
+  gap: 5px;
+}
+
+.input-column img {
+  width: 100px;
+  margin-bottom: 5px;
+}
+.input-column-header {
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.undo {
+  max-width: 100px;
+  padding: 5px;
+  border: 1px solid var(--light-accent);
+  border-radius: 5px;
+  text-decoration: underline;
+  height: 30px;
+  margin-top: 50px;
 }

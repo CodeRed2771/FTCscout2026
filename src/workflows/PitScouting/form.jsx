@@ -7,7 +7,7 @@ import MatchClock from '../../components/MatchClock'
 
 function PitScoutingForm({setPitTeams, triggerHaptic}) {
   const submitMatch = async () => {
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxEdvFjsU32P84L5PLgLCluweoRVh5_HJzT4ZGqHLdXwXwBwWIWqKkhC1zzV2xNzWzUjQ/exec";
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyy4wmiicy637FwQKAycjlo7wBnMfVPvyzCjdpl1SUnh1tGhcyBYSKPwees1qGO0scy/exec";
     const payload = {
       matchData: [],
       hpData: [],
@@ -20,9 +20,10 @@ function PitScoutingForm({setPitTeams, triggerHaptic}) {
       teamNum: "",
       driveTrain: "Other",
       capacity: 0,
-      autoFuel: 0,
-      turret: "",
-      climb: "None"
+      flower: "No",
+      hive: "No",
+      autoLeave: "No",
+      autoPark: "No"
     });
     setCurrentPage(0);
     setMatchTimer(0);
@@ -155,9 +156,10 @@ function PitScoutingForm({setPitTeams, triggerHaptic}) {
         teamNum: "",
         driveTrain: "Other",
         capacity: 0,
-        autoFuel: 0,
-        turret: "",
-        climb: "None"
+        flower: "No",
+        hive: "No",
+        autoLeave: "No",
+        autoPark: "No"
       });
       setCurrentPage(0);
       setMatchTimer(0);

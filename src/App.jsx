@@ -96,10 +96,9 @@ function App() {
   }, []);
 
   const uploadData = async (data, hpdata, pitdata) => {
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxEdvFjsU32P84L5PLgLCluweoRVh5_HJzT4ZGqHLdXwXwBwWIWqKkhC1zzV2xNzWzUjQ/exec";
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyy4wmiicy637FwQKAycjlo7wBnMfVPvyzCjdpl1SUnh1tGhcyBYSKPwees1qGO0scy/exec";
     const payload = {
       matchData: data,
-      hpData: hpdata,
       pitData: pitdata
     };
 
@@ -107,7 +106,7 @@ function App() {
     
     if(sending != true) {
       sending = true;
-      if((data != [] && data != "") || (hpdata != [] && hpdata != "") || (pitdata != [] && pitdata != "")) {
+      if((data != [] && data != "") || (pitdata != [] && pitdata != "")) {
         try {
           const response = await fetch(WEB_APP_URL, {
             method: "POST",
@@ -129,16 +128,16 @@ function App() {
           sending = false;
         }
       } else {
-        alert("Fine twin, thou hast no data to send!")
+        alert("Dearest twin, it is apparent that there is a paucity of data!")
         sending = false;
       }
     } else {
-      alert("chillax brochacho you only need to submit once")
+      alert("Finest of twinnys, please hold thy horses, as a request has already been sent!")
     }
   }
 
   const fetchData = async () => {
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyX-_RwqBzyWfuL5ZbOAl0nGQO3z3PvrXpnprE_Q445DlC42Pg8JiLNjBFkBMwYrzV8lA/exec";
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbydcd0ntx0qdULSdw6wEiTerf7AESx-PFGO3Qi18zcIwQbb6-hV-kuOC2XVftP-WrUA/exec";
 
     try {
       const response = await fetch(WEB_APP_URL);
