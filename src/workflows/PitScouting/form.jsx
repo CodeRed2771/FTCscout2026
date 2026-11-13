@@ -7,6 +7,8 @@ import MatchClock from '../../components/MatchClock'
 import { useNavigate } from 'react-router-dom';
 
 function PitScoutingForm({setPitTeams, triggerHaptic}) {
+  const navigate = useNavigate();
+  
   const submitMatch = async () => {
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyy4wmiicy637FwQKAycjlo7wBnMfVPvyzCjdpl1SUnh1tGhcyBYSKPwees1qGO0scy/exec";
     const payload = {

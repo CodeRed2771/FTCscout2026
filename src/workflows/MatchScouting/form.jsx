@@ -7,10 +7,12 @@ import Teleop from './pages/Teleop'
 import PostMatch from './pages/PostMatch'
 import '../../css/App.css'
 import useLocalStorage from '../../utils/useLocalStorage';
+import { useNavigate } from 'react-router-dom';
 
 function MatchScoutingForm({matches, setMatches, TBAdata, triggerHaptic, tablet}) {  
   let alliance = tablet.substring(0, 4).replaceAll(' ', '') || "";
   let robot = tablet.substring(4,6).replaceAll(' ', '') || "";
+  const navigate = useNavigate();
 
   const submitMatch = async () => {
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbz-h60RAdLtnDZIIrlU850N-nlvZBNZ6Kt_OlCDu44o2YK876QNj9NYqtwlu4GWEm5j/exec";
