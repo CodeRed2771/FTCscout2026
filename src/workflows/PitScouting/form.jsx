@@ -4,6 +4,7 @@ import useLocalStorage from '../../utils/useLocalStorage';
 import Form from './pages/Form';
 import PageNav from '../../components/PageNav'
 import MatchClock from '../../components/MatchClock'
+import { useNavigate } from 'react-router-dom';
 
 function PitScoutingForm({setPitTeams, triggerHaptic}) {
   const submitMatch = async () => {
@@ -118,7 +119,7 @@ function PitScoutingForm({setPitTeams, triggerHaptic}) {
   ]
 
   const backToMain = () => {
-    window.location = "/"
+    navigate('/');
   }
 
   const renderPage = () => {

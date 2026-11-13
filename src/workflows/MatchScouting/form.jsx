@@ -150,7 +150,7 @@ function MatchScoutingForm({matches, setMatches, TBAdata, triggerHaptic, tablet}
   ]
 
   const backToMain = () => {
-    window.location = "/"
+    navigate('/');
   } // Track if timer is running
 
 useEffect(() => {

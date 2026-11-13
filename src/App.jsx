@@ -137,7 +137,7 @@ function App() {
   }
 
   const fetchData = async () => {
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbydcd0ntx0qdULSdw6wEiTerf7AESx-PFGO3Qi18zcIwQbb6-hV-kuOC2XVftP-WrUA/exec";
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyy4wmiicy637FwQKAycjlo7wBnMfVPvyzCjdpl1SUnh1tGhcyBYSKPwees1qGO0scy/exec";
 
     try {
       const response = await fetch(WEB_APP_URL);
