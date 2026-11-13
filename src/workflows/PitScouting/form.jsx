@@ -8,9 +8,9 @@ import { useNavigate } from 'react-router-dom';
 
 function PitScoutingForm({setPitTeams, triggerHaptic}) {
   const navigate = useNavigate();
-  
+
   const submitMatch = async () => {
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyy4wmiicy637FwQKAycjlo7wBnMfVPvyzCjdpl1SUnh1tGhcyBYSKPwees1qGO0scy/exec";
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyPppnvgqtlYMSTC6zQ6i4z3C5W6KtMW2Rsa1E-uxWDQ5NIr8PNpIsCkaw013nhZ99q/exec";
     const payload = {
       matchData: [],
       hpData: [],

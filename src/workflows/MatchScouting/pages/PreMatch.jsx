@@ -14,6 +14,7 @@ function PreMatch({formData: formData, setFormData: setFormData}) {
         <NumberInput label="Match Number" value={formData.matchNum} onChange={(val) => setFormData({...formData, matchNum: val})} />
         <TextInput label="Scouter Name" value={formData.scouter} onChange={(val) => setFormData({...formData, scouter: val})} />
         <NumberInput label="Team Number" value={formData.teamNum} onChange={(val) => setFormData({...formData, teamNum: val})} />
+        <SelectButtons selected={formData.alliance} label="Alliance" values={["Red", "Blue"]} value={formData.alliance} onClick={(val) => setFormData({...formData, alliance: val})} />
       </div>
   )
 }

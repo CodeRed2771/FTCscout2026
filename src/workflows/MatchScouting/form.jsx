@@ -15,7 +15,7 @@ function MatchScoutingForm({matches, setMatches, TBAdata, triggerHaptic, tablet}
   const navigate = useNavigate();
 
   const submitMatch = async () => {
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbz-h60RAdLtnDZIIrlU850N-nlvZBNZ6Kt_OlCDu44o2YK876QNj9NYqtwlu4GWEm5j/exec";
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyPppnvgqtlYMSTC6zQ6i4z3C5W6KtMW2Rsa1E-uxWDQ5NIr8PNpIsCkaw013nhZ99q/exec";
     const payload = {
       matchData: [formData],
       hpData: [],
@@ -25,6 +25,7 @@ function MatchScoutingForm({matches, setMatches, TBAdata, triggerHaptic, tablet}
     setFormData({
       scouter: formData.scouter,
       teamNum: "",
+      alliance: formData.alliance,
       matchNum: Number(formData.matchNum) + 1,
       auto: {
         hiveNectar: 0,
@@ -99,6 +100,7 @@ function MatchScoutingForm({matches, setMatches, TBAdata, triggerHaptic, tablet}
     {
       scouter: "",
       teamNum: "",
+alliance: "",
       matchNum: "",
       auto: {
         hiveNectar: 0,
@@ -230,6 +232,7 @@ useEffect(() => {
       setFormData({
         scouter: formData.scouter,
         teamNum: "",
+        alliance: formData.alliance,
         matchNum: Number(formData.matchNum),
         auto: {
           hiveNectar: 0,

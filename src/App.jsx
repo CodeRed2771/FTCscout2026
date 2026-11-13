@@ -6,6 +6,7 @@ import PitScoutingForm from './workflows/PitScouting/form.jsx';
 import MainMenu from './MainMenu';
 import './css/App.css'
 import useLocalStorage from './utils/useLocalStorage';
+import TeamLookup from './workflows/TeamLookup/main.jsx'
 
 function App() {
   const [matches, setMatches] = useLocalStorage('matches', []);
@@ -96,7 +97,7 @@ function App() {
   }, []);
 
   const uploadData = async (data, hpdata, pitdata) => {
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyy4wmiicy637FwQKAycjlo7wBnMfVPvyzCjdpl1SUnh1tGhcyBYSKPwees1qGO0scy/exec";
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyPppnvgqtlYMSTC6zQ6i4z3C5W6KtMW2Rsa1E-uxWDQ5NIr8PNpIsCkaw013nhZ99q/exec";
     const payload = {
       matchData: data,
       pitData: pitdata
@@ -137,7 +138,7 @@ function App() {
   }
 
   const fetchData = async () => {
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyy4wmiicy637FwQKAycjlo7wBnMfVPvyzCjdpl1SUnh1tGhcyBYSKPwees1qGO0scy/exec";
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyPppnvgqtlYMSTC6zQ6i4z3C5W6KtMW2Rsa1E-uxWDQ5NIr8PNpIsCkaw013nhZ99q/exec";
 
     try {
       const response = await fetch(WEB_APP_URL);
@@ -165,6 +166,7 @@ function App() {
         <Route path="/pit" element={<PitScoutingForm triggerHaptic={triggerHaptic} setPitTeams={setPitTeams}/>} />
         <Route path="/match" element={<MatchScoutingForm tablet={tablet} triggerHaptic={triggerHaptic} matches={matches} setMatches={setMatches} TBAdata={TBAdata}/>} />
         <Route path="/leaderboard" element={<Leaderboard day1Ct={50} fetchData={fetchData} compData={TBAdata} teamData={TBAteams}/>} />
+        <Route path="/teamlookup" element={<TeamLookup fetchData={fetchData} compData={TBAdata} teamData={TBAteams}/>} />
       </Routes>
     </div>
   )
