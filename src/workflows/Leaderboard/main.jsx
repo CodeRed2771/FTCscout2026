@@ -4,12 +4,14 @@ import useLocalStorage from '../../utils/useLocalStorage';
 import PageNav from '../../components/PageNav'
 import check from '../../assets/icons/check.svg';
 import close from '../../assets/icons/close.svg';
+import { useNavigate } from 'react-router-dom';
 
 function Leaderboard({fetchData, compData, teamData}) {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [comp, setComp] = useState("Kentwood");
+    const navigate = useNavigate();
     const [currentPage, setCurrentPage] = useLocalStorage('statscurrentPage', "Leaderboard");
     const [backText, setBackText] = useLocalStorage('backText',"Back To Main");
     
@@ -36,7 +38,7 @@ function Leaderboard({fetchData, compData, teamData}) {
     const day1Ct = getDayOneMatchCount(compData);
 
     const backToMain = () => {
-        window.location = "/"
+        navigate("/");
     }
 
     const handleNext = () => {
