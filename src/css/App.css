@@ -100,7 +100,8 @@ select:focus {
   gap: 8px;
 }
 
-.nav-btn-container .nav-btn {
+.nav-btn-container .nav-btn,
+.nav-btn-container select {
   display: flex;
   flex: 1;
   justify-content: center;
@@ -718,4 +719,14 @@ input[type="range"]::-moz-range-thumb {
   text-decoration: underline;
   height: 30px;
   margin-top: 50px;
+}
+
+select {
+  border-radius: 5px;
+  min-height: 35px;
+}
+
+.robotpic {
+  max-height: 400px; 
+  border-radius: 10px;
 }

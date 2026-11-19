@@ -9,23 +9,54 @@ import '../../css/App.css'
 import useLocalStorage from '../../utils/useLocalStorage';
 import { useNavigate } from 'react-router-dom';
 
-function MatchScoutingForm({matches, setMatches, TBAdata, triggerHaptic, tablet}) {  
+function MatchScoutingForm({fetchData, matches, setMatches, TBAdata, triggerHaptic, tablet, competition}) {  
   let alliance = tablet.substring(0, 4).replaceAll(' ', '') || "";
   let robot = tablet.substring(4,6).replaceAll(' ', '') || "";
   const navigate = useNavigate();
+  const [pitData, setPitData] = useState([]);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    let active = true;
+
+    const executeFetch = async () => {
+      try {
+        setError(null);
+
+        const result = await fetchData();
+        console.log(result);
+
+        if (!active) return;
+
+        const filtered =
+          result?.pit?.filter((i) => i.Location === competition) ?? [];
+        setPitData(filtered);
+      } catch (err) {
+        if (!active) return;
+        setError(err instanceof Error ? err.message : "Failed to fetch data");
+        setPitData([]);
+      }
+    };
+
+    executeFetch();
+
+    return () => {
+      active = false;
+    };
+  }, [competition]);
 
   const submitMatch = async () => {
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyPppnvgqtlYMSTC6zQ6i4z3C5W6KtMW2Rsa1E-uxWDQ5NIr8PNpIsCkaw013nhZ99q/exec";
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxqsBJcoAQnt5eVNcR9wtEqkTosnWKIh9DD6X7wT7KNDX8astZBHS1GBEV8CMvz8y0N/exec";
     const payload = {
       matchData: [formData],
       hpData: [],
       pitData: []
     };
-
+    
     setFormData({
       scouter: formData.scouter,
-      teamNum: "",
-      alliance: formData.alliance,
+      teamNum: TBAdata[formData.matchNum]?.teams.find((team) => team.alliance === alliance && team.allianceRole === (robot === "1" ? "Captain" : "FirstPick"))?.teamNumber || "",
+      alliance: alliance,
       matchNum: Number(formData.matchNum) + 1,
       auto: {
         hiveNectar: 0,
@@ -54,7 +85,8 @@ function MatchScoutingForm({matches, setMatches, TBAdata, triggerHaptic, tablet}
         },
         park: -1,
       },
-      comments:""
+      comments:"",
+      location: competition,
     });
     
     setDisabled({
@@ -99,9 +131,9 @@ function MatchScoutingForm({matches, setMatches, TBAdata, triggerHaptic, tablet}
   const [formData, setFormData] = useLocalStorage('matchformData',
     {
       scouter: "",
-      teamNum: "",
-alliance: "",
-      matchNum: "",
+      teamNum: TBAdata[0]?.teams.find((team) => team.alliance === alliance && team.allianceRole === (robot === "1" ? "Captain" : "FirstPick"))?.teamNumber || "",
+      alliance: alliance,
+      matchNum: 1,
       auto: {
         hiveNectar: 0,
         hivePollen: 0,
@@ -130,8 +162,47 @@ alliance: "",
         park: -1,
       },
       comments:"",
+      location: competition,
     }
   );
+
+  useEffect(() => {
+    setFormData({
+      scouter: formData.scouter || "",
+      teamNum: TBAdata[0]?.teams.find((team) => team.alliance === alliance && team.allianceRole === (robot === "1" ? "Captain" : "FirstPick"))?.teamNumber || "",
+      alliance: alliance || "",
+      matchNum: 1,
+      auto: {
+        hiveNectar: 0,
+        hivePollen: 0,
+        cycles: {
+          hiveNectar: [],
+          hivePollen: [],
+        },
+        leave: -1,
+        park: -1,
+      },
+      teleop: {
+        hiveNectar: 0,
+        flowerNectar: 0,
+        hivePollen: 0,
+        flowerPollen: 0,
+        gardenNectar: 0,
+        gardenPollen: 0,
+        cycles: {
+          hiveNectar: [],
+          flowerNectar: [],
+          hivePollen: [],
+          flowerPollen: [],
+          gardenNectar: [],
+          gardenPollen: [],
+        },
+        park: -1,
+      },
+      comments:"",
+      location: competition,
+    }); 
+  }, [TBAdata] ); 
 
   const [disabled, setDisabled] = useLocalStorage('disabled', {
     hiveNectar: false,
@@ -144,50 +215,52 @@ alliance: "",
   const [backText, setBackText] = useLocalStorage('backText',"Back To Main");
   const [matchTimer, setMatchTimer] = useState(0);
   const [isActive, setIsActive] = useState(false);
+  const [isCompleted, setIsCompleted] = useState(false); // New state to track if the match has completed
   const [isPaused, setIsPaused] = useState(false); // New state to handle the pause
 
   let pages = [
-    <PreMatch isActive={isActive} disabled={disabled} setDisabled={setDisabled} formData={formData} setFormData={setFormData}/>,
+    <PreMatch pitData={pitData} alliance={alliance} robot={robot} isActive={isActive} disabled={disabled} setDisabled={setDisabled} formData={formData} setFormData={setFormData} TBAdata={TBAdata}/>,
     <Auto matchTimer={matchTimer} isActive={isActive} disabled={disabled} setDisabled={setDisabled} formData={formData} setFormData={setFormData}/>,
-    <Teleop matchTimer={matchTimer} isActive={isActive} disabled={disabled} setDisabled={setDisabled} formData={formData} setFormData={setFormData}/>,
-    <PostMatch submitMatch={submitMatch} isActive={isActive} disabled={disabled} setDisabled={setDisabled} formData={formData} setFormData={setFormData}/>
+    <Teleop isCompleted={isCompleted} matchTimer={matchTimer} isActive={isActive} disabled={disabled} setDisabled={setDisabled} formData={formData} setFormData={setFormData}/>,
+    <PostMatch isCompleted={isCompleted} submitMatch={submitMatch} isActive={isActive} disabled={disabled} setDisabled={setDisabled} formData={formData} setFormData={setFormData}/>
   ]
 
   const backToMain = () => {
     navigate('/');
   } // Track if timer is running
 
-useEffect(() => {
-  let interval = null;
+  useEffect(() => {
+    let interval = null;
 
-  if (isActive && !isPaused) {
-    interval = setInterval(() => {
-      setMatchTimer((prev) => {
-        // 1. Handle the 20-second pause
-        if (prev === 29) { // We check at 29 so the '30' renders and then stays
-          setIsPaused(true);
-          setTimeout(() => {
-            setIsPaused(false);
-            setCurrentPage(2);
-          }, 8000);
-          return 30;
-        }
+    if (isActive && !isPaused) {
+      interval = setInterval(() => {
+        setMatchTimer((prev) => {
+          // 1. Handle the 20-second pause
+          if (prev === 29) { // We check at 29 so the '30' renders and then stays
+            setIsPaused(true);
+            setTimeout(() => {
+              setIsPaused(false);
+              setCurrentPage(2);
+            }, 8000);
+            return 30;
+          }
 
-        // 2. Check if we've reached the final limit
-        if (prev >= 150) {
-          setIsActive(false);
-          return prev;
-        }
+          // 2. Check if we've reached the final limit
+          if (prev >= 150) {
+            setIsActive(false);
+            setIsCompleted(true);
+            return prev;
+          }
 
-        return prev + 1;
-      });
-    }, 1000);
-  } else {
-    clearInterval(interval);
-  }
+          return prev + 1;
+        });
+      }, 1000);
+    } else {
+      clearInterval(interval);
+    }
 
-  return () => clearInterval(interval);
-}, [isActive, isPaused]);
+    return () => clearInterval(interval);
+  }, [isActive, isPaused]);
 
   // Logic to decide which "page" object to render
   const renderPage = () => {
@@ -231,8 +304,8 @@ useEffect(() => {
     if (window.confirm("Are you sure you want to reset the match? All current data will be lost.")) {
       setFormData({
         scouter: formData.scouter,
-        teamNum: "",
-        alliance: formData.alliance,
+        teamNum: TBAdata[formData.matchNum - 1]?.teams.find((team) => team.alliance === alliance && team.allianceRole === (robot === "1" ? "Captain" : "FirstPick"))?.teamNumber || "",
+        alliance: alliance,
         matchNum: Number(formData.matchNum),
         auto: {
           hiveNectar: 0,
@@ -262,6 +335,7 @@ useEffect(() => {
           park: -1,
         },
         comments:"",
+        location: competition,
       });
       setDisabled({
         autoFuel: false,
@@ -278,6 +352,7 @@ useEffect(() => {
       setCurrentPage(0);
       setMatchTimer(0);
       setIsActive(false);
+      setIsCompleted(false);
       setIsPaused(false);
       setBackText("Back To Main");
     }
@@ -286,9 +361,16 @@ useEffect(() => {
 return (
     <>
       <div className="form tuff-load">
-        <MatchClock disabled={(currentPage == 0)} timer={matchTimer} isActive={isActive} setIsActive={setIsActive} togglePause={togglePause} resetMatch={resetMatch} isPaused={isPaused}/>
+        {
+          TBAdata.length > 0 ? (
+            <>
+              <MatchClock isCompleted={isCompleted} setIsCompleted={setIsCompleted} disabled={(currentPage == 0)} timer={matchTimer} isActive={isActive} setIsActive={setIsActive} togglePause={togglePause} resetMatch={resetMatch} isPaused={isPaused}/>
 
-        {renderPage()}
+              {renderPage()}
+            </>
+          ) : "There's no FTCscout data for this competition yet!"
+        }
+
       </div>
 
       <PageNav disabled={disabled} handleBack={handleBack} backText={backText} handleNext={handleNext}/>

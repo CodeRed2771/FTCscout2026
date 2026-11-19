@@ -6,6 +6,7 @@ import SelectButtons from '../../../components/inputs/SelectButton.jsx'
 import Counter from '../../../components/inputs/Counter.jsx'
 import Button from '../../../components/inputs/Button.jsx'
 import StartPos from '../../../assets/startpos.jpg'
+import CameraInput from '../../../components/inputs/CameraInput.jsx'
 
 function Form({formData: formData, setFormData: setFormData, submitMatch, disabled, matchTimer}) {
   return (
@@ -63,12 +64,14 @@ function Form({formData: formData, setFormData: setFormData, submitMatch, disabl
           onClick={(val) => {setFormData({...formData, autoPark: val})}}
         />
         
+        <CameraInput image={formData.image} onSaveToCell={(val) => setFormData({...formData, image: val})}/>
 
         <Button
-            label="Submit Match"
+            label="Submit Team"
             onClick={submitMatch}
             type="submit"
         />
+
     </div>
   )
 }
