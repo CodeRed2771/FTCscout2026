@@ -16,6 +16,7 @@ function App() {
   const [tablet, setTablet] = useLocalStorage('tablet', "Red 1");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [pit, setPit] = useState([]);
   const [competition, setCompetition] = useLocalStorage('competition', "Kentwood");
   let sending = false;
 
@@ -27,6 +28,35 @@ function App() {
       console.log("Haptics not supported on this device/browser.");
     }
   };
+
+  useEffect(() => {
+    let active = true;
+
+    const executeFetch = async () => {
+      try {
+        setError(null);
+
+        const result = await fetchData();
+        console.log(result);
+
+        if (!active) return;
+
+        const filtered =
+          result?.pit?.filter((i) => i.Location === competition) ?? [];
+        setPit(filtered);
+      } catch (err) {
+        if (!active) return;
+        setError(err instanceof Error ? err.message : "Failed to fetch data");
+        setPit([]);
+      }
+    };
+
+    executeFetch();
+
+    return () => {
+      active = false;
+    };
+  }, [competition]);
 
   const pullTBA = async (eventKey) => {
     if(competition === "Practice") {
@@ -177,9 +207,9 @@ function App() {
       <Routes>
         <Route path="/" element={<MainMenu competition={competition} setCompetition={setCompetition} tablet={tablet} setTablet={setTablet} uploadData={uploadData} matches={matches} pullTBA={pullTBA} pitTeams={pitTeams}/>} />
         <Route path="/pit" element={<PitScoutingForm competition={competition} triggerHaptic={triggerHaptic} setPitTeams={setPitTeams}/>} />
-        <Route path="/match" element={<MatchScoutingForm fetchData={fetchData} competition={competition} tablet={tablet} triggerHaptic={triggerHaptic} matches={matches} setMatches={setMatches} TBAdata={TBAdata}/>} />
+        <Route path="/match" element={<MatchScoutingForm pit={pit} fetchData={fetchData} competition={competition} tablet={tablet} triggerHaptic={triggerHaptic} matches={matches} setMatches={setMatches} TBAdata={TBAdata}/>} />
         <Route path="/leaderboard" element={<Leaderboard day1Ct={50} fetchData={fetchData} compData={TBAdata} teamData={TBAteams}/>} />
-        <Route path="/teamlookup" element={<TeamLookup fetchData={fetchData} compData={TBAdata} teamData={TBAteams}/>} />
+        <Route path="/teamlookup" element={<TeamLookup competition={competition} fetchData={fetchData} compData={TBAdata} teamData={TBAteams}/>} />
       </Routes>
     </div>
   )

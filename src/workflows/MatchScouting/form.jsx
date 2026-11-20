@@ -9,41 +9,13 @@ import '../../css/App.css'
 import useLocalStorage from '../../utils/useLocalStorage';
 import { useNavigate } from 'react-router-dom';
 
-function MatchScoutingForm({fetchData, matches, setMatches, TBAdata, triggerHaptic, tablet, competition}) {  
+function MatchScoutingForm({pit, fetchData, matches, setMatches, TBAdata, triggerHaptic, tablet, competition}) {  
   let alliance = tablet.substring(0, 4).replaceAll(' ', '') || "";
   let robot = tablet.substring(4,6).replaceAll(' ', '') || "";
   const navigate = useNavigate();
-  const [pitData, setPitData] = useState([]);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    let active = true;
 
-    const executeFetch = async () => {
-      try {
-        setError(null);
-
-        const result = await fetchData();
-        console.log(result);
-
-        if (!active) return;
-
-        const filtered =
-          result?.pit?.filter((i) => i.Location === competition) ?? [];
-        setPitData(filtered);
-      } catch (err) {
-        if (!active) return;
-        setError(err instanceof Error ? err.message : "Failed to fetch data");
-        setPitData([]);
-      }
-    };
-
-    executeFetch();
-
-    return () => {
-      active = false;
-    };
-  }, [competition]);
 
   const submitMatch = async () => {
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxqsBJcoAQnt5eVNcR9wtEqkTosnWKIh9DD6X7wT7KNDX8astZBHS1GBEV8CMvz8y0N/exec";
@@ -219,7 +191,7 @@ function MatchScoutingForm({fetchData, matches, setMatches, TBAdata, triggerHapt
   const [isPaused, setIsPaused] = useState(false); // New state to handle the pause
 
   let pages = [
-    <PreMatch pitData={pitData} alliance={alliance} robot={robot} isActive={isActive} disabled={disabled} setDisabled={setDisabled} formData={formData} setFormData={setFormData} TBAdata={TBAdata}/>,
+    <PreMatch pit={pit} alliance={alliance} robot={robot} isActive={isActive} disabled={disabled} setDisabled={setDisabled} formData={formData} setFormData={setFormData} TBAdata={TBAdata}/>,
     <Auto matchTimer={matchTimer} isActive={isActive} disabled={disabled} setDisabled={setDisabled} formData={formData} setFormData={setFormData}/>,
     <Teleop isCompleted={isCompleted} matchTimer={matchTimer} isActive={isActive} disabled={disabled} setDisabled={setDisabled} formData={formData} setFormData={setFormData}/>,
     <PostMatch isCompleted={isCompleted} submitMatch={submitMatch} isActive={isActive} disabled={disabled} setDisabled={setDisabled} formData={formData} setFormData={setFormData}/>

@@ -6,7 +6,7 @@ import SelectButtons from '../../../components/inputs/SelectButton.jsx'
 import Counter from '../../../components/inputs/Counter.jsx'
 import StartPos from '../../../assets/startpos.jpg'
 
-function PreMatch({pitData, formData, setFormData, alliance, robot, TBAdata}) {
+function PreMatch({pit, formData, setFormData, alliance, robot, TBAdata}) {
   return (
     <div className="input-page">
         <h1>Pre-Match</h1>
@@ -19,10 +19,10 @@ function PreMatch({pitData, formData, setFormData, alliance, robot, TBAdata}) {
         </div>
 
         {
-          pitData.length > 0 && (
+          pit.length > 0 && (
             <>
               <label>Team Photo:</label>
-              <img className="robotpic" src={JSON.parse(pitData.find((i) => String(i["Team Number"]) == String(formData.teamNum))?.Image || "{}")?.image} alt="Team Does Not Have a Photo" />
+              <img className="robotpic" src={JSON.parse(pit.find((i) => String(i["Team Number"]) == String(formData.teamNum))?.Image || "{}")?.image} alt="Team Does Not Have a Photo" />
             </>
           )
         }
