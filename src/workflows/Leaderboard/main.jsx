@@ -4,12 +4,14 @@ import useLocalStorage from '../../utils/useLocalStorage';
 import PageNav from '../../components/PageNav'
 import check from '../../assets/icons/check.svg';
 import close from '../../assets/icons/close.svg';
+import { useNavigate } from 'react-router-dom';
 
 function Leaderboard({fetchData, compData, teamData}) {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [comp, setComp] = useState("Kentwood");
+    const [comp, setComp] = useState("Overall");
+    const navigate = useNavigate();
     const [currentPage, setCurrentPage] = useLocalStorage('statscurrentPage', "Leaderboard");
     const [backText, setBackText] = useLocalStorage('backText',"Back To Main");
     
@@ -36,7 +38,7 @@ function Leaderboard({fetchData, compData, teamData}) {
     const day1Ct = getDayOneMatchCount(compData);
 
     const backToMain = () => {
-        window.location = "/"
+        navigate("/");
     }
 
     const handleNext = () => {
@@ -62,6 +64,7 @@ function Leaderboard({fetchData, compData, teamData}) {
             // 2. Call the function passed via props
             const result = await fetchData();
             setData(result);
+            console.log(result);
         } catch (err) {
             setLoading(false);
             setError(err.message || 'Something went wrong');
@@ -84,7 +87,7 @@ function Leaderboard({fetchData, compData, teamData}) {
         // 2. Filter by competition once
         const compSorted = comp === "Overall" 
             ? allEntries 
-            : allEntries.filter(item => item["Competition"] === comp);
+            : allEntries.filter(item => item["Location"] === comp);
 
         // 3. Create a Lookup Set (The Secret Sauce)
         // We store strings like "12-254" (Match-Team) for O(1) instant lookup
@@ -108,13 +111,13 @@ function Leaderboard({fetchData, compData, teamData}) {
         let dat = []
 
         compdata.match.forEach((item) => {dat.push(item)})
-        compdata.hp.forEach((item) => {dat.push(item)})
+        compdata.pit.forEach((item) => {dat.push(item)})
 
         if(compparam === "Overall") {
             compSorted = dat;
         } else {
             dat.forEach((item) => {
-                if(item["Competition"] === compparam) compSorted.push(item)
+                if(item["Location"] === compparam) compSorted.push(item)
             });
         }
 
@@ -138,7 +141,9 @@ function Leaderboard({fetchData, compData, teamData}) {
                 <label>Competition:</label>
                 <select onChange={(e) => setComp(e.target.value)}>
                     <option value="Kentwood">Kentwood</option>
-                    <option value="Muskegon">Muskegon</option>
+                    <option value="Fruitport">Fruitport</option>
+                    <option value="States">States</option>
+                    <option value="Practice">Practice</option>
                     <option value="Overall">Overall</option>
                 </select>
             </div>
@@ -183,10 +188,10 @@ function Leaderboard({fetchData, compData, teamData}) {
             pitSorted = pitdat;
         } else {
             pitdat.forEach((item) => {
-                if(item["Competition"] === compparam) pitSorted.push(item)
+                if(item["Location"] === compparam) pitSorted.push(item)
             });
             dat.forEach((item) => {
-                if(item["Competition"] === compparam) compSorted.push(item)
+                if(item["Location"] === compparam) compSorted.push(item)
             });
         }
 
@@ -440,8 +445,8 @@ function Leaderboard({fetchData, compData, teamData}) {
                 ) : (
                     <>
                         {currentPage === "Leaderboard" && lead(data, comp)}
-                        {currentPage === "Progress" && progress(data, "Kentwood")}
-                        {currentPage === "Match Schedule" && schedule(compData)}
+                        {currentPage === "Progress" && "ngl i didn't have time to make this one"}
+                        {currentPage === "Match Schedule" && "this one either"}
                     </>
                 )}
             </div>

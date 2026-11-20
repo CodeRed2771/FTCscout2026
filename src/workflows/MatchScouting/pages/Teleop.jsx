@@ -10,12 +10,12 @@ import OBSSI from '../../../components/inputs/OBSSI.jsx'
 import nectar from '../../../assets/nectar.png'
 import pollen from '../../../assets/pollen.png'
 
-function Teleop({disabled, setDisabled, formData, setFormData, isActive, matchTimer}) {
+function Teleop({isCompleted, disabled, setDisabled, formData, setFormData, isActive, matchTimer}) {
   return (
     <div className="input-page">
       <h1>Teleop</h1>
 
-      <div className={"input-row " + (isActive && matchTimer >= 30 ? "" : "disabled")}>
+      <div className={"input-row " + (matchTimer >= 30 || isCompleted ? "" : "disabled")}>
         <div className="input-column">
             <div className="input-column-header">
               <img src={nectar} alt="Nectar"/>
@@ -74,11 +74,11 @@ function Teleop({disabled, setDisabled, formData, setFormData, isActive, matchTi
           </div>
         </div>  
 
-        <div className="input-row">
-          <button onClick={() => setFormData({...formData, teleop: {...formData.teleop, park: -1}})} className={(!isActive || matchTimer < 30) || formData.teleop.park === -1 ? "disabled undo" : "undo"}>
+        <div className={"input-row" + (matchTimer >= 30 || isCompleted ? "" : "disabled")}>
+          <button onClick={() => setFormData({...formData, teleop: {...formData.teleop, park: -1}})} className={formData.teleop.park === -1 ? "disabled undo" : "undo"}>
             Undo Park
           </button>
-          <Button label="Park" onClick={() => setFormData({...formData, teleop: {...formData.teleop, park: matchTimer}})} disabled={(!isActive || matchTimer < 30) || formData.teleop.park !== -1}/>
+          <Button label="Park" onClick={() => setFormData({...formData, teleop: {...formData.teleop, park: matchTimer}})} disabled={formData.teleop.park !== -1}/>
         </div>
     </div>
   )

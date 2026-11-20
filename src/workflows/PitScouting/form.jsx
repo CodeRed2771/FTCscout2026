@@ -4,10 +4,13 @@ import useLocalStorage from '../../utils/useLocalStorage';
 import Form from './pages/Form';
 import PageNav from '../../components/PageNav'
 import MatchClock from '../../components/MatchClock'
+import { useNavigate } from 'react-router-dom';
 
-function PitScoutingForm({setPitTeams, triggerHaptic}) {
+function PitScoutingForm({competition, setPitTeams, triggerHaptic}) {
+  const navigate = useNavigate();
+
   const submitMatch = async () => {
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyy4wmiicy637FwQKAycjlo7wBnMfVPvyzCjdpl1SUnh1tGhcyBYSKPwees1qGO0scy/exec";
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbz7v9lNrdfuX_FgXC87IFTj2e2BdLC6R5xpOOz2rwdyZSB_34N2IhdfJRYFmkdyQnfK/exec";
     const payload = {
       matchData: [],
       hpData: [],
@@ -23,7 +26,9 @@ function PitScoutingForm({setPitTeams, triggerHaptic}) {
       flower: "No",
       hive: "No",
       autoLeave: "No",
-      autoPark: "No"
+      autoPark: "No",
+      image: "",
+      location: competition
     });
     setCurrentPage(0);
     setMatchTimer(0);
@@ -118,7 +123,7 @@ function PitScoutingForm({setPitTeams, triggerHaptic}) {
   ]
 
   const backToMain = () => {
-    window.location = "/"
+    navigate('/');
   }
 
   const renderPage = () => {
@@ -159,7 +164,9 @@ function PitScoutingForm({setPitTeams, triggerHaptic}) {
         flower: "No",
         hive: "No",
         autoLeave: "No",
-        autoPark: "No"
+        autoPark: "No",
+        image: "",
+        location: competition
       });
       setCurrentPage(0);
       setMatchTimer(0);

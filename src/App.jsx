@@ -6,15 +6,17 @@ import PitScoutingForm from './workflows/PitScouting/form.jsx';
 import MainMenu from './MainMenu';
 import './css/App.css'
 import useLocalStorage from './utils/useLocalStorage';
+import TeamLookup from './workflows/TeamLookup/main.jsx'
 
 function App() {
   const [matches, setMatches] = useLocalStorage('matches', []);
   const [pitTeams, setPitTeams] = useLocalStorage('pitTeams', []);
   const [TBAdata, setTBAdata] = useLocalStorage('tbadata', []);
   const [TBAteams, setTBAteams] = useLocalStorage('tbateams', []);
-  const [tablet, setTablet] = useLocalStorage('tablet', "");
+  const [tablet, setTablet] = useLocalStorage('tablet', "Red 1");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [competition, setCompetition] = useLocalStorage('competition', "Kentwood");
   let sending = false;
 
   const triggerHaptic = () => {
@@ -27,28 +29,38 @@ function App() {
   };
 
   const pullTBA = async (eventKey) => {
-    const res = await fetch(`https://www.thebluealliance.com/api/v3/event/${eventKey}/matches/simple`, {
-      headers: {
-        "X-TBA-Auth-Key": "3rTF5gxmIdJSYKqhKohNTzEKl7D9x04ivAFGYzOumRgHdqIA6acFssENXYNkfCK7"
-      }
-    });
+    if(competition === "Practice") {
+      return [{teams: [{alliance: "Red", allianceRole: "Captain", teamNumber: 5383}, {alliance: "Red", allianceRole: "FirstPick", teamNumber: 5383}, {alliance: "Blue", allianceRole: "Captain", teamNumber: 5384}, {alliance: "Blue", allianceRole: "FirstPick", teamNumber: 5384}]}];
+    } else {
+      const res = await fetch(`https://api.ftcscout.org/rest/v1/events/2026/${eventKey}/matches/`, {
+        headers: {
+          "X-TBA-Auth-Key": "3rTF5gxmIdJSYKqhKohNTzEKl7D9x04ivAFGYzOumRgHdqIA6acFssENXYNkfCK7"
+        }
+      });
 
-    const data = await res.json();
+      const data = await res.json();
 
-    console.log(data.filter((item) => {return item.comp_level === "qm"}));
-    return data.filter((item) => {return item.comp_level === "qm"});
+      console.log(data.filter((item) => {return item.tournamentLevel === "Quals"}));
+      return data.filter((item) => {return item.tournamentLevel === "Quals"});
+    }
+
   }
 
   const pullTBAteams = async (eventKey) => {
-    const res = await fetch(`https://www.thebluealliance.com/api/v3/event/${eventKey}/teams/simple`, {
-      headers: {
-        "X-TBA-Auth-Key": "3rTF5gxmIdJSYKqhKohNTzEKl7D9x04ivAFGYzOumRgHdqIA6acFssENXYNkfCK7"
-      }
-    });
+    if(competition === "Practice") {
+      return [{team_number: 5383, nickname: "Team 5383", city: "City A", state_prov: "State A", country: "Country A"}, {team_number: 5384, nickname: "Team 5384", city: "City B", state_prov: "State B", country: "Country B"}];
+    } else {
+      const res = await fetch(`https://api.ftcscout.org/rest/v1/events/2026/${eventKey}/teams/`, {
+        headers: {
+          "X-TBA-Auth-Key": "3rTF5gxmIdJSYKqhKohNTzEKl7D9x04ivAFGYzOumRgHdqIA6acFssENXYNkfCK7"
+        }
+      });
 
-    const data = await res.json();
-
-    return data;
+      const data = await res.json();
+      
+      console.log(data);
+      return data;
+    }
   }
 
   useEffect(() => {
@@ -59,8 +71,10 @@ function App() {
           setError(null);
           
           // 2. Call the function passed via props
-          const result = await pullTBA("2026miken");
-          setTBAdata(result.sort((a, b) => Number(a.match_number) - Number(b.match_number)));
+          
+          const event = competition === "Kentwood" ? "USMIKEQ" : competition === "Fruitport" ? "USMIFRQ2" : competition === "States" ? "USMINWCMP" : "practice";
+          const result = await pullTBA(event);
+          setTBAdata(result.sort((a, b) => Number(a.id) - Number(b.id)));
       } catch (err) {
           setError(err.message || 'Something went wrong');
       } finally {
@@ -71,7 +85,7 @@ function App() {
       executeFetch();
 
       // 3. Add fetchRemoteData to the dependency array
-  }, []);
+  }, [competition]);
 
   useEffect(() => {
       // 1. Create the async wrapper
@@ -80,8 +94,8 @@ function App() {
           setLoading(true);
           setError(null);
           
-          // 2. Call the function passed via props
-          const result = await pullTBAteams("2026miken");
+          const event = competition === "Kentwood" ? "USMIKEQ" : competition === "Fruitport" ? "USMIFRQ2" : competition === "States" ? "USMINWCMP" : "practice";
+          const result = await pullTBAteams(event);
           setTBAteams(result.sort((a, b) => Number(a.team_number) - Number(b.team_number)));
       } catch (err) {
           setError(err.message || 'Something went wrong');
@@ -93,10 +107,10 @@ function App() {
       executeFetch();
 
       // 3. Add fetchRemoteData to the dependency array
-  }, []);
+  }, [competition]);
 
   const uploadData = async (data, hpdata, pitdata) => {
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyy4wmiicy637FwQKAycjlo7wBnMfVPvyzCjdpl1SUnh1tGhcyBYSKPwees1qGO0scy/exec";
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxqsBJcoAQnt5eVNcR9wtEqkTosnWKIh9DD6X7wT7KNDX8astZBHS1GBEV8CMvz8y0N/exec";
     const payload = {
       matchData: data,
       pitData: pitdata
@@ -137,7 +151,7 @@ function App() {
   }
 
   const fetchData = async () => {
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbydcd0ntx0qdULSdw6wEiTerf7AESx-PFGO3Qi18zcIwQbb6-hV-kuOC2XVftP-WrUA/exec";
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxqsBJcoAQnt5eVNcR9wtEqkTosnWKIh9DD6X7wT7KNDX8astZBHS1GBEV8CMvz8y0N/exec";
 
     try {
       const response = await fetch(WEB_APP_URL);
@@ -161,10 +175,11 @@ function App() {
   return (
     <div className="app tuff-load">
       <Routes>
-        <Route path="/" element={<MainMenu tablet={tablet} setTablet={setTablet} uploadData={uploadData} matches={matches} pullTBA={pullTBA} pitTeams={pitTeams}/>} />
-        <Route path="/pit" element={<PitScoutingForm triggerHaptic={triggerHaptic} setPitTeams={setPitTeams}/>} />
-        <Route path="/match" element={<MatchScoutingForm tablet={tablet} triggerHaptic={triggerHaptic} matches={matches} setMatches={setMatches} TBAdata={TBAdata}/>} />
+        <Route path="/" element={<MainMenu competition={competition} setCompetition={setCompetition} tablet={tablet} setTablet={setTablet} uploadData={uploadData} matches={matches} pullTBA={pullTBA} pitTeams={pitTeams}/>} />
+        <Route path="/pit" element={<PitScoutingForm competition={competition} triggerHaptic={triggerHaptic} setPitTeams={setPitTeams}/>} />
+        <Route path="/match" element={<MatchScoutingForm fetchData={fetchData} competition={competition} tablet={tablet} triggerHaptic={triggerHaptic} matches={matches} setMatches={setMatches} TBAdata={TBAdata}/>} />
         <Route path="/leaderboard" element={<Leaderboard day1Ct={50} fetchData={fetchData} compData={TBAdata} teamData={TBAteams}/>} />
+        <Route path="/teamlookup" element={<TeamLookup fetchData={fetchData} compData={TBAdata} teamData={TBAteams}/>} />
       </Routes>
     </div>
   )
