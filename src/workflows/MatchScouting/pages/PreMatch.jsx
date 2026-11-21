@@ -22,7 +22,7 @@ function PreMatch({pit, formData, setFormData, alliance, robot, TBAdata}) {
           pit.length > 0 && (
             <>
               <label>Team Photo:</label>
-              <img className="robotpic" src={JSON.parse(pit.find((i) => String(i["Team Number"]) == String(formData.teamNum))?.Image || "{}")?.image} alt="Team Does Not Have a Photo" />
+              <img className="robotpic" src={pit.find((i) => String(i["Team Number"]) == String(formData.teamNum))?.Image || ""} alt="Team Does Not Have a Photo" />
             </>
           )
         }
