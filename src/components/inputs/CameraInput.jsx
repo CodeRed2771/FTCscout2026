@@ -1,55 +1,111 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { get, set } from 'idb-keyval';
+
+// Compress raw Kindle Fire camera photo to ~100KB Blob
+function compressImageToBlob(file, maxWidth = 1024, quality = 0.75) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    const objectUrl = URL.createObjectURL(file);
+
+    img.onload = () => {
+      URL.revokeObjectURL(objectUrl);
+      const scale = Math.min(1, maxWidth / img.width);
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width * scale;
+      canvas.height = img.height * scale;
+
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+      canvas.toBlob((blob) => resolve(blob), 'image/jpeg', quality);
+    };
+
+    img.src = objectUrl;
+  });
+}
 
 export default function CameraInput({ image, onSaveToCell }) {
-  const [previewImage, setPreviewImage] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
 
-  const handleFileChange = (e) => {
+  // Load preview whenever formData.image changes (or resets to "")
+  useEffect(() => {
+    let activeUrl = null;
+
+    async function loadPreview() {
+      if (!image) {
+        setPreviewUrl(null);
+        return;
+      }
+
+      // If it's already an uploaded Cloudinary URL, display it directly
+      if (image.startsWith('http')) {
+        setPreviewUrl(image);
+        return;
+      }
+
+      // Otherwise, fetch the local Blob from IndexedDB using the imageId
+      const blob = await get(image);
+      if (blob) {
+        activeUrl = URL.createObjectURL(blob);
+        setPreviewUrl(activeUrl);
+      }
+    }
+
+    loadPreview();
+    return () => {
+      if (activeUrl) URL.revokeObjectURL(activeUrl);
+    };
+  }, [image]);
+
+  const handleFileChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      const base64DataUrl = reader.result; // "data:image/jpeg;base64,..."
-      setPreviewImage(base64DataUrl);
+    const compressedBlob = await compressImageToBlob(file);
+    if (!compressedBlob) return;
 
-      // Wrap it in your JSON structure and send it to your cell
-      const payload = JSON.stringify({
-        timestamp: Date.now(),
-        image: base64DataUrl,
-        source: "native_camera"
-      });
+    // 1. Save binary Blob in IndexedDB under a unique ID
+    const imageId = `pit_photo_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
+    await set(imageId, compressedBlob);
 
-      onSaveToCell(payload);
-    };
-    reader.readAsDataURL(file);
+    // 2. Save ONLY the tiny ID string into formData.image
+    onSaveToCell(imageId);
+
+    // Reset input so you can retake a photo if needed
+    e.target.value = '';
   };
 
   return (
     <div style={{ textAlign: 'center', fontFamily: 'sans-serif', padding: '20px' }}>
-      {/* The file input with capture attribute */}
-      <label style={{ 
-        color: 'white', 
-        padding: '12px 24px', 
-        borderRadius: '8px', 
-        cursor: 'pointer',
-        display: 'inline-block',
-        fontSize: '16px'
-      }} className="input-button">
-        Take Photo
-        <input 
-          type="file" 
-          accept="image/*" 
-          capture="environment" 
-          onChange={handleFileChange} 
-          style={{ display: 'none' }} 
+      <label
+        style={{
+          color: 'white',
+          padding: '12px 24px',
+          borderRadius: '8px',
+          cursor: 'pointer',
+          display: 'inline-block',
+          fontSize: '16px',
+        }}
+        className="input-button"
+      >
+        {image ? 'Retake Robot Photo' : 'Take Robot Photo'}
+        <input
+          type="file"
+          accept="image/*"
+          capture="environment"
+          onChange={handleFileChange}
+          style={{ display: 'none' }}
         />
       </label>
 
-      {/* Preview */}
-      {image && (
+      {previewUrl && (
         <div style={{ marginTop: '20px' }}>
-          <p>Captured Image Preview:</p>
-          <img src={JSON.parse(image).image} alt="Captured snap" style={{ width: '200px', borderRadius: '8px' }} />
+          <p>Robot Photo Preview:</p>
+          <img
+            src={previewUrl}
+            alt="Robot snap"
+            style={{ width: '200px', borderRadius: '8px' }}
+          />
         </div>
       )}
     </div>

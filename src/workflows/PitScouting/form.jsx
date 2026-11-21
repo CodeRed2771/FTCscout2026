@@ -5,17 +5,21 @@ import Form from './pages/Form';
 import PageNav from '../../components/PageNav'
 import MatchClock from '../../components/MatchClock'
 import { useNavigate } from 'react-router-dom';
+import { get, del } from 'idb-keyval';
 
-function PitScoutingForm({competition, setPitTeams, triggerHaptic}) {
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbz7v9lNrdfuX_FgXC87IFTj2e2BdLC6R5xpOOz2rwdyZSB_34N2IhdfJRYFmkdyQnfK/exec";
+const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/wwmjk9yo/image/upload";
+const CLOUDINARY_PRESET = "a6zkymrx";
+
+// Helper: Resolves a team's IndexedDB imageId into a Cloudinary URL before sending to Sheets
+
+
+function PitScoutingForm({prepareTeamPayload, competition, setPitTeams, triggerHaptic}) {
   const navigate = useNavigate();
 
-  const submitMatch = async () => {
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbz7v9lNrdfuX_FgXC87IFTj2e2BdLC6R5xpOOz2rwdyZSB_34N2IhdfJRYFmkdyQnfK/exec";
-    const payload = {
-      matchData: [],
-      hpData: [],
-      pitData: [formData]
-    };
+const submitMatch = async () => {
+    // Snapshot the current form before resetting
+    const submittedTeam = { ...formData, location: competition };
 
     triggerHaptic();
     setFormData({
@@ -34,36 +38,50 @@ function PitScoutingForm({competition, setPitTeams, triggerHaptic}) {
     setMatchTimer(0);
     setIsActive(false);
     setIsPaused(false);
-    
-    try {
-      const response = await fetch(WEB_APP_URL, {
-        method: "POST",
-        mode: "no-cors", // Required for Google Apps Script redirects
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
 
-      console.log("Data successfully sent!");
-    } catch (error) {
-      setPitTeams(prevMatches => [...prevMatches, formData]);
-
-      console.log("Upload failed:", error);
+    // If obviously offline, immediately queue into pitTeams array
+    if (!navigator.onLine) {
+      setPitTeams(prevMatches => [...prevMatches, submittedTeam]);
+      console.log("Offline: Saved team + photo ID to pitTeams queue.");
+      return;
     }
 
+    try {
+      // 1. Upload photo to Cloudinary & swap imageId -> secure_url
+      const readyTeam = await prepareTeamPayload(submittedTeam);
 
-  }
+      // 2. Send to Google Apps Script
+      await fetch(WEB_APP_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          matchData: [],
+          hpData: [],
+          pitData: [readyTeam]
+        }),
+      });
+
+      console.log("Team and photo URL successfully sent!");
+    } catch (error) {
+      // Upload failed (weak pit Wi-Fi): save to pitTeams array with imageId intact
+      setPitTeams(prevMatches => [...prevMatches, submittedTeam]);
+      console.log("Upload failed, queued in pitTeams:", error);
+    }
+  };
 
   const [formData, setFormData] = useLocalStorage('pitformData',
     {
       scouter: "",
       teamNum: "",
       driveTrain: "Other",
-      capacity: 0,
-      autoFuel: 0,
-      turret: "",
-      climb: "None"
+      capacity: "",
+      flower: "No",
+      hive: "No",
+      autoLeave: "No",
+      autoPark: "No",
+      image: "",
+      location: competition
     }
   );
 
