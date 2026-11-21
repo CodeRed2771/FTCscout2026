@@ -4,7 +4,7 @@ import play from "../assets/icons/play.svg"
 import restart from "../assets/icons/restart.svg"
 import pause from "../assets/icons/pause.svg"
 
-function MatchClock({ timer, disabled, isActive, setIsActive, resetMatch, togglePause, isPaused }) {
+function MatchClock({ isCompleted, timer, disabled, isActive, setIsActive, resetMatch, togglePause, isPaused, setIsCompleted }) {
     let minutes;
     let seconds;
 
@@ -47,7 +47,7 @@ function MatchClock({ timer, disabled, isActive, setIsActive, resetMatch, toggle
                     <img src={restart}></img>
                 </button>
             </div>
-            <button className="startbutton" style={{ display: isActive ? "none" : "flex" }} onClick={() => { setIsActive(true) }}>Start Match</button>
+            <button className="startbutton" style={{ display: (isActive || isCompleted) ? "none" : "flex" }} onClick={() => { setIsActive(true); setIsCompleted(false) }}>Start Match</button>
         </div>
     )
 }

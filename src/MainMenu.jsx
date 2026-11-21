@@ -7,7 +7,7 @@ import send from './assets/icons/send.svg';
 import leaderboard from './assets/icons/leaderboard.svg';
 import searchIcon from './assets/icons/search.svg';
 
-function MainMenu({uploadData, matches, hpMatches, pullTBA, pitTeams, setTablet, tablet}) {
+function MainMenu({competition, setCompetition, uploadData, matches, hpMatches, pullTBA, pitTeams, setTablet, tablet}) {
 
   return (
     <div className="main-menu tuff-load">
@@ -19,10 +19,21 @@ function MainMenu({uploadData, matches, hpMatches, pullTBA, pitTeams, setTablet,
             <div className="nav-btn-container">
               <button className="nav-btn" id="send" onClick={() => uploadData(matches, hpMatches, pitTeams)}><img src={send}></img></button>
               <Link to="/teamlookup" className="nav-btn"><img src={searchIcon} /></Link>
-              {
-                //<button className="nav-btn" onClick={() => pullTBA("2026miken")}>Pull TBA matches</button>
-              }
               <Link to="/leaderboard" className="nav-btn"><img src={leaderboard} /></Link>
+            </div>
+            <div className="nav-btn-container">
+              <select value={tablet} onChange={(e) => setTablet(e.target.value)}>
+                <option value="Red 1">Red 1</option>
+                <option value="Red 2">Red 2</option>
+                <option value="Blue 1">Blue 1</option>
+                <option value="Blue 2">Blue 2</option>
+              </select>
+              <select value={competition} onChange={(e) => setCompetition(e.target.value)}>
+                <option value="Kentwood">Kentwood</option>
+                <option value="Fruitport">Fruitport</option>
+                <option value="States">States</option>
+                <option value="Practice">Practice</option>
+              </select>
             </div>
         </nav>
     </div>

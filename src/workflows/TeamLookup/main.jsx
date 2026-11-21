@@ -8,12 +8,12 @@ import TextInput from '../../components/inputs/Text';
 import { useNavigate } from 'react-router-dom';
 import { buildPickList } from '../../utils/biobuzzAnalytics';
 
-function Leaderboard({ fetchData, compData, teamData }) {
+function Leaderboard({ fetchData, compData, teamData, competition }) {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
-    const [comp, setComp] = useState("Kentwood");
+    const [comp, setComp] = useState(competition || "Kentwood");
     const [currentPage, setCurrentPage] = useLocalStorage('statpage', "TeamLookup");
     const [backText, setBackText] = useLocalStorage('backText', "Back To Main");
 

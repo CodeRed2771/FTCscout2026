@@ -10,7 +10,7 @@ function Leaderboard({fetchData, compData, teamData}) {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [comp, setComp] = useState("Kentwood");
+    const [comp, setComp] = useState("Overall");
     const navigate = useNavigate();
     const [currentPage, setCurrentPage] = useLocalStorage('statscurrentPage', "Leaderboard");
     const [backText, setBackText] = useLocalStorage('backText',"Back To Main");
@@ -141,7 +141,9 @@ function Leaderboard({fetchData, compData, teamData}) {
                 <label>Competition:</label>
                 <select onChange={(e) => setComp(e.target.value)}>
                     <option value="Kentwood">Kentwood</option>
-                    <option value="Muskegon">Fruitport</option>
+                    <option value="Fruitport">Fruitport</option>
+                    <option value="States">States</option>
+                    <option value="Practice">Practice</option>
                     <option value="Overall">Overall</option>
                 </select>
             </div>
